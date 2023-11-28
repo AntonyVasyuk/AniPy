@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AniPyUI</class>
+ <widget class="QMainWindow" name="AniPyUI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuPanels">
+    <property name="title">
+     <string>Panels</string>
+    </property>
+    <widget class="QMenu" name="menuOpen_panel">
+     <property name="title">
+      <string>Open panel...</string>
+     </property>
+     <addaction name="actionX_sheet"/>
+    </widget>
+    <addaction name="menuOpen_panel"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionCreate_project"/>
+    <addaction name="actionOpen_Project"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuPanels"/>
+  </widget>
+  <action name="actionX_sheet">
+   <property name="text">
+    <string>X-sheet</string>
+   </property>
+  </action>
+  <action name="actionCreate_project">
+   <property name="text">
+    <string>Create project</string>
+   </property>
+  </action>
+  <action name="actionOpen_Project">
+   <property name="text">
+    <string>Open Project</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
