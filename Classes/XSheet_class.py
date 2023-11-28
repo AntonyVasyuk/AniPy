@@ -26,6 +26,7 @@ class XSheet(QWidget, Ui_XSheetUI):
         self.leftAddButton.clicked.connect(lambda: self.add_frame(0))
         self.rightAddButton.clicked.connect(lambda: self.add_frame(1))
 
+
     def add_frame(self, d):
         self.parent_.current_project.add_frame(self.choose_index + d)
         self.move_visible_frames(not d)
@@ -76,12 +77,12 @@ class XSheet(QWidget, Ui_XSheetUI):
             self.current_frames = self.frames[self.left_frames_end:self.right_frames_end + 1]
         self.choose_index += d
 
-        # self.parent_.reset_pixmap(QPixmap(f"{self.frames[self.choose_index].image_path}.png"))
+        self.parent_.reset_pixmap(QPixmap(f"{self.frames[self.choose_index].image_path}.png"))
         self.update_buttons()
 
     def showEvent(self, event):
         self.load_parameters()
-        # self.parent_.show_board()
+        # self.parent_.show_board_()
 
     def load_parameters(self):
         settings = dict_read_from_csv("Tables_Interupting/Settings.csv")

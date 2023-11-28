@@ -33,6 +33,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.actionCreate_project.triggered.connect(self.get_new_project_params)
         self.actionOpen_Project.triggered.connect(self.what_project_to_open)
 
+
         # self.painter = QPainter()
 
         # self.board = QLabel(self)
@@ -91,18 +92,18 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.creating_project_form = None
         self.current_project = Project(self, **kwargs)
         # self.x_sheet = XSheet(self)
-        # self.show_board()
         # self.x_sheet.show()
         self.actionX_sheet.trigger()
+        self.show_board()
 
-    # def show_board_(self):
-    #     self.show_board()
+    def show_board_(self):
+        self.show_board()
 
-    # def reset_pixmap(self, pixmap):
-    #     self.pixmap = pixmap
-    #     self.board.setPixmap(self.pixmap)
+    def reset_pixmap(self, pixmap):
+        self.pixmap = pixmap
+        self.board.setPixmap(self.pixmap)
 
-    # def show_board(self):
+    def show_board(self):
         # print(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png", self.current_project.width, sep='\n')
 
         # self.board = Board(self)
@@ -112,11 +113,17 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         # self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
         # self.board.setPixmap(self.pixmap)
 
-
-        # self.b = QLabel(self)
-        # self.b.setGeometry(10, 30, self.current_project.width, self.current_project.height)
-        # self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
-        # self.b.setPixmap(self.pixmap)
+        self.setFocus()
+        self.board = QLabel(self)
+        self.board.setGeometry(10, 30, self.current_project.width, self.current_project.height)
+        # self.board.setGeometry(10, 30, 100, 100)
+        # self.board.setText("Hello!!!11!")
+        self.board.show()
+        self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+        # self.pixmap = QPixmap(r"C:\Users\vasyu\OneDrive\Рабочий стол\Untitled.png")
+        # print(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+        self.board.setPixmap(self.pixmap)
+        # print(000)
 
 
         # self.board.setText("Hello!")
