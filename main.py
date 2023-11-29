@@ -17,6 +17,19 @@ from Classes.Project_class import Project
 from constants import FOLDER_WITH_PROJECTS
 
 
+class Brush:
+    def __init__(self, x, y, size, painter: QPainter):
+        self.name = "brush"
+        self.x = x
+        self.y = y
+        self.size = size
+        self.painter = painter
+
+    def draw(self):
+        self.painter.drawEllipse(QPoint(self.x, self.y), self.size, self.size)
+
+
+
 class AniPy(QMainWindow, Ui_AniPyUI):
     def __init__(self):
         super().__init__()
@@ -25,38 +38,67 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         # self.
         # self.styleSheet()
         # print(self.styleSheet())
+        self.paint = False
+        self.objects_to_paint = []
+        self.draw_mode = "brush"
+        self.brush_size = 5
         self.x_sheet = None
         self.creating_project_form = None
         self.opening_project_form = None
+        self.current_project = None
         self.menuFile.aboutToShow.connect(self.check_menus)
         self.actionX_sheet.triggered.connect(self.show_x_sheet)
         self.actionCreate_project.triggered.connect(self.get_new_project_params)
         self.actionOpen_Project.triggered.connect(self.what_project_to_open)
+        self.setMouseTracking(True)
 
+        # self.painter = QPainter(self.board)
 
-        # self.painter = QPainter()
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        if (self.current_project is not None):
+            if (self.board.x() <= event.x() <= self.board.x() + self.board.width() and
+                    self.board.y() <= event.y() <= self.board.y() + self.board.height()):
+                self.mouse_x = event.x() - self.board.x()
+                self.mouse_y = event.y() - self.board.y()
+                self.objects_to_paint.append(self.what_object_to_draw())
+                self.paint = True
+                self.paintEvent(QPaintEvent(QRegion()))
 
-        # self.board = QLabel(self)
-        # self.board.setGeometry(0, 0, 0, 0)
-        # self.pixmap = None
-        # self.show_board()
-        # self.actionX_sheet.trigger()
+    def what_object_to_draw(self):
+        match self.draw_mode:
+            case "brush":
+                return Brush(self.mouse_x, self.mouse_y, self.brush_size, self.painter)
 
-    # def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-    #     print(0)
-    #     self.update()
-    #
-    # def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
-    #     self.painter.begin(self)
-    #     self.painter.setBrush(QColor("#ffffff"))
-    #     self.painter.setPen(QColor("#ffffff"))
-    #
-    #
-    #     self.painter.drawEllipse(10, 10, 100, 100)
-    #     print(0)
-    #
-    #     self.painter.end()
-    #     # self.update()
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        if (self.paint):
+            if (self.current_project is not None):
+                if (self.board.x() <= event.x() <= self.board.x() + self.board.width() and
+                        self.board.y() <= event.y() <= self.board.y() + self.board.height()):
+                    self.mouse_x = event.x() - self.board.x()
+                    self.mouse_y = event.y() - self.board.y()
+                    self.objects_to_paint.append(self.what_object_to_draw())
+
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
+        self.paint = False
+        self.painter.end()
+        self.pixmap.save(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+
+    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
+        if (self.paint):
+            print('!')
+            self.painter.begin(self.pixmap)
+            self.painter.setPen(QColor(0, 0, 0))
+            self.painter.setBrush(QColor(0, 0, 0))
+            # self.painter.drawPoint(self.mouse_x, self.mouse_y)
+
+            for obj in self.objects_to_paint:
+                match obj.name:
+                    case "brush":
+                        obj.draw()
+                        del self.objects_to_paint[-1]
+
+            self.reset_pixmap(self.pixmap)
+        # self.paint = False
 
     def check_menus(self):
         if (os.listdir(FOLDER_WITH_PROJECTS)):
@@ -91,8 +133,6 @@ class AniPy(QMainWindow, Ui_AniPyUI):
     def create_project(self, **kwargs):
         self.creating_project_form = None
         self.current_project = Project(self, **kwargs)
-        # self.x_sheet = XSheet(self)
-        # self.x_sheet.show()
         self.actionX_sheet.trigger()
         self.show_board()
 
@@ -104,70 +144,14 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.board.setPixmap(self.pixmap)
 
     def show_board(self):
-        # print(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png", self.current_project.width, sep='\n')
-
-        # self.board = Board(self)
-        # self.board.setParent(self)
-        #
-        # self.board.setGeometry(10, 30, self.current_project.width, self.current_project.height)
-        # self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
-        # self.board.setPixmap(self.pixmap)
-
-        self.setFocus()
+        # self.setFocus()
         self.board = QLabel(self)
         self.board.setGeometry(10, 30, self.current_project.width, self.current_project.height)
-        # self.board.setGeometry(10, 30, 100, 100)
-        # self.board.setText("Hello!!!11!")
         self.board.show()
         self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
-        # self.pixmap = QPixmap(r"C:\Users\vasyu\OneDrive\Рабочий стол\Untitled.png")
-        # print(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
         self.board.setPixmap(self.pixmap)
-        # print(000)
 
-
-        # self.board.setText("Hello!")
-        # self.update()
-        # print(self.board.pixmap())
-
-    # def paint_point(self, event: QtGui.QMouseEvent):
-        # self.painter.begin(self.board.pixmap())
-        #
-        # self.painter.setBrush(QColor(0, 0, 255, 255))
-        # self.painter.drawPoint(event.x(), event.y())
-        #
-        # self.painter.end()
-
-
-# class Board(QLabel):
-#     def __init__(self, parent):
-#         super(Board, self).__init__()
-#         self.parent = parent
-#
-#         self.painter = QPainter()
-#
-#         self.mouse_cords = [0, 0]
-#         # self.board = QLabel(self)
-#         # self.board.setGeometry(0, 0, self.width(), self.height())
-#         # self.pixmap = QPixmap(f"{self.parent.x_sheet.frames[self.parent.x_sheet.choose_index].image_path}.png")
-#         # self.setPixmap(self.pixmap)
-#         # self.painter = QPainter(self.pixmap)
-#
-#     def mousePressEvent(self, event: QMouseEvent):
-#         print(9)
-#         self.mouse_cords = [event.x(), event.y()]
-#         self.update()
-#         # self.parent.paint_point(event)
-#
-#     def paintEvent(self, a0):
-#         self.painter.begin(self.pixmap())
-#
-#         self.painter.setBrush(QColor("#ffffff"))
-#         self.painter.setPen(QColor("#000000"))
-#         self.painter.drawEllipse(self.mouse_cords[0], self.mouse_cords[1], 10, 10)
-#         self.update()
-#
-#         self.painter.end()
+        self.painter = QPainter(self.pixmap)
 
 
 def except_hook(cls, exception, traceback):
