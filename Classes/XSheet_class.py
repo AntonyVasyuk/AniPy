@@ -34,6 +34,7 @@ class XSheet(QWidget, Ui_XSheetUI):
 
     def setup_ui_with_features(self):
         self.resize(SPACE * 6 + self.leftButton.width() * 2 + BTN_WIDTH * self.num_of_visible_frames, self.height())
+        self.setFixedSize(self.width(), self.height())
         self.rightButton.move(self.width() - self.rightButton.width() - SPACE, self.rightButton.y())
         self.rightLabel.move(self.width() - self.rightButton.width() - SPACE * 3, self.rightButton.y())
         self.frame_buttons = []

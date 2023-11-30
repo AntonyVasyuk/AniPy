@@ -15,6 +15,11 @@ class Ui_CreatingProject(object):
     def setupUi(self, CreatingProject):
         CreatingProject.setObjectName("CreatingProject")
         CreatingProject.resize(401, 252)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(CreatingProject.sizePolicy().hasHeightForWidth())
+        CreatingProject.setSizePolicy(sizePolicy)
         self.project_name = QtWidgets.QLineEdit(CreatingProject)
         self.project_name.setGeometry(QtCore.QRect(100, 10, 291, 31))
         self.project_name.setObjectName("project_name")

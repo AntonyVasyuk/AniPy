@@ -13,6 +13,7 @@ class OpeningProject(QWidget, Ui_OpenProject):
         super().__init__()
         self.setupUi(self)
         self.parent = parent
+        self.setFixedSize(self.width(), self.height())
         self.projects_names = os.listdir(FOLDER_WITH_PROJECTS)
         # print(self.projects_names)
         # print(*self.projects_names)

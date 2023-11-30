@@ -9,6 +9,7 @@ class CreatingProject(QWidget, Ui_CreatingProject):
         super().__init__()
         self.setupUi(self)
         self.parent = parent
+        self.setFixedSize(self.width(), self.height())
         self.frame_width.setValue(200)
         self.frame_height.setValue(200)
 

@@ -50,7 +50,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.actionX_sheet.triggered.connect(self.show_x_sheet)
         self.actionCreate_project.triggered.connect(self.get_new_project_params)
         self.actionOpen_Project.triggered.connect(self.what_project_to_open)
-        self.setMouseTracking(True)
+        # self.setMouseTracking(True)
 
         # self.painter = QPainter(self.board)
 
@@ -62,31 +62,54 @@ class AniPy(QMainWindow, Ui_AniPyUI):
                 self.mouse_y = event.y() - self.board.y()
                 self.objects_to_paint.append(self.what_object_to_draw())
                 self.paint = True
-                self.paintEvent(QPaintEvent(QRegion()))
+                self.was_out_of_board = False
+                self.update()
+            else:
+                self.was_out_of_board = True
 
-    def what_object_to_draw(self):
+    def what_object_to_draw(self, x=None, y=None):
+        if (x is None):
+            x = self.mouse_x
+        if (y is None):
+            y = self.mouse_y
         match self.draw_mode:
             case "brush":
-                return Brush(self.mouse_x, self.mouse_y, self.brush_size, self.painter)
+                return Brush(x, y, self.brush_size, self.painter)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         if (self.paint):
             if (self.current_project is not None):
                 if (self.board.x() <= event.x() <= self.board.x() + self.board.width() and
                         self.board.y() <= event.y() <= self.board.y() + self.board.height()):
+
                     self.mouse_x = event.x() - self.board.x()
                     self.mouse_y = event.y() - self.board.y()
+                    prev_mouse_x = self.objects_to_paint[-1].x
+                    prev_mouse_y = self.objects_to_paint[-1].y
+                    if (not self.was_out_of_board):
+                        n = 10
+                        for i in range(1, n):
+                            self.objects_to_paint.append(self.what_object_to_draw(
+                                prev_mouse_x + i * (self.mouse_x - prev_mouse_x) // n,
+                                prev_mouse_y + i * (self.mouse_y - prev_mouse_y) // n
+                            ))
+                    self.was_out_of_board = False
                     self.objects_to_paint.append(self.what_object_to_draw())
+                else:
+                    self.was_out_of_board = True
+        # self.update()
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
-        self.paint = False
-        self.painter.end()
-        self.pixmap.save(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+        if (self.paint):
+            self.paint = False
+            self.objects_to_paint.clear()
+            # self.painter.end()
+            self.pixmap.save(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
 
     def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
         if (self.paint):
-            print('!')
-            self.painter.begin(self.pixmap)
+            # print('!')
+            # self.painter.begin(self.pixmap)
             self.painter.setPen(QColor(0, 0, 0))
             self.painter.setBrush(QColor(0, 0, 0))
             # self.painter.drawPoint(self.mouse_x, self.mouse_y)
@@ -95,7 +118,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):
                 match obj.name:
                     case "brush":
                         obj.draw()
-                        del self.objects_to_paint[-1]
+                        # del self.objects_to_paint[-1]
 
             self.reset_pixmap(self.pixmap)
         # self.paint = False
@@ -129,6 +152,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.opening_project_form = None
         self.current_project = Project(self, is_creating_new=False, **kwargs)
         self.actionX_sheet.trigger()
+        self.show_board()
 
     def create_project(self, **kwargs):
         self.creating_project_form = None
@@ -140,8 +164,10 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.show_board()
 
     def reset_pixmap(self, pixmap):
+        self.painter.end()
         self.pixmap = pixmap
         self.board.setPixmap(self.pixmap)
+        self.painter.begin(self.pixmap)
 
     def show_board(self):
         # self.setFocus()
@@ -152,6 +178,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.board.setPixmap(self.pixmap)
 
         self.painter = QPainter(self.pixmap)
+        self.painter.begin(self.pixmap)
 
 
 def except_hook(cls, exception, traceback):
