@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import *
 
 from Classes.Creating_project_class import CreatingProject
 from Classes.Opening_Project_class import OpeningProject
-from Tables_Interupting.CSVInterupting import write_rows_to_csv, list_read_from_csv
+from Tables_Interupting.CSVInterupting import write_rows_to_csv, list_read_from_csv, dict_read_from_csv
 from Classes.XSheet_class import XSheet
 from UI_Py.AniPy_UI import Ui_AniPyUI
 from Classes.Project_class import Project
@@ -35,13 +35,16 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         super().__init__()
         self.setupUi(self)
         self.set_settings_to_default()
+        self.load_parameters()
         # self.
         # self.styleSheet()
         # print(self.styleSheet())
         self.paint = False
         self.objects_to_paint = []
+
         self.draw_mode = "brush"
         self.brush_size = 5
+
         self.x_sheet = None
         self.creating_project_form = None
         self.opening_project_form = None
@@ -160,8 +163,8 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.actionX_sheet.trigger()
         self.show_board()
 
-    def show_board_(self):
-        self.show_board()
+    # def show_board_(self):
+    #     self.show_board()
 
     def reset_pixmap(self, pixmap):
         self.painter.end()
@@ -179,6 +182,10 @@ class AniPy(QMainWindow, Ui_AniPyUI):
 
         self.painter = QPainter(self.pixmap)
         self.painter.begin(self.pixmap)
+
+    def load_parameters(self):
+        settings = dict_read_from_csv("Tables_Interupting/Settings.csv")
+        self.num_of_visible_frames = int(settings["NumOfVisibleFrames"])
 
 
 def except_hook(cls, exception, traceback):
