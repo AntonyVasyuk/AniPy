@@ -269,23 +269,40 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         settings = dict_read_from_csv("Tables_Interupting/Settings.csv")
         self.num_of_visible_frames = int(settings["NumOfVisibleFrames"])
 
+    # def return_transparent_pixmap_legacy(self, path, t):
+    #     t = int(t * 255)
+    #
+    #     print(t)
+    #     image = QImage(path)
+    #     for i in range(image.height()):
+    #         for j in range(image.width()):
+    #             # image.pixel(j, i)
+    #             # image.setPixel(j, i, QColor())
+    #
+    #             rgb = QColor(image.pixel(j, i))
+    #             r, g, b, a = rgb.getRgb()
+    #             # print(r, g, b, a)
+    #             image.setPixelColor(QPoint(j, i), QColor(r, g, b, t))
+    #
+    #     pixmap = QPixmap(image)
+    #     return pixmap
+
     def return_transparent_pixmap(self, path, t):
-        t = int(t * 255)
-
-        print(t)
+        pixmap = QPixmap(path)
         image = QImage(path)
-        for i in range(image.height()):
-            for j in range(image.width()):
-                # image.pixel(j, i)
-                # image.setPixel(j, i, QColor())
+        painter = QPainter(image)
 
-                rgb = QColor(image.pixel(j, i))
-                r, g, b, a = rgb.getRgb()
-                # print(r, g, b, a)
-                image.setPixelColor(QPoint(j, i), QColor(r, g, b, t))
+        image.fill(Qt.transparent)
 
-        pixmap = QPixmap(image)
-        return pixmap
+        painter.begin(image)
+
+        painter.setOpacity(t)
+        painter.drawPixmap(0, 0, pixmap)
+
+        painter.end()
+
+        return QPixmap(image)
+
 
 
 def except_hook(cls, exception, traceback):
