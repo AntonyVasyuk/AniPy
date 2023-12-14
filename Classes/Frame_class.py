@@ -19,9 +19,7 @@ class Frame:
         self.image_path = f"{parent.project_folder}{SEP}{NAME_OF_FOLDER_WITH_FRAMES}{SEP}{self.number}"
         # self.background_path = f"{parent.project_folder}{SEP}{NAME_OF_FOLDER_WITH_BACKGROUNDS}{SEP}{kwargs['Background']}"
         if (is_creating_new):
-            self.PIL_image = Image.new(mode='RGBA', size=(self.width, self.height), color=self.color)
-            self.PIL_image.save(f"{self.image_path}.png")
-        else:
-            self.PIL_image = Image.open(f"{self.image_path}.png")
+            PIL_image = Image.new(mode='RGBA', size=(self.width, self.height), color=self.color)
+            PIL_image.save(f"{self.image_path}.png")
         self.QT_image = QImage(f"{self.image_path}.png")
         self.is_marked = is_marked

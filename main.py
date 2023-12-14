@@ -3,8 +3,9 @@ import sys
 
 import csv
 
+from PIL import Image
 from PyQt5 import QtGui
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
@@ -107,7 +108,24 @@ class AniPy(QMainWindow, Ui_AniPyUI):
             self.paint = False
             self.objects_to_paint.clear()
             # self.painter.end()
+
+            # print(self.pixmap.hasAlphaChane)
+
+            # image = QImage(self.pixmap.width(), self.pixmap.height(), QImage.Format.Format_ARGB32)
+            # image = self.pixmap.toImage()
+            # image.
+            # image.save(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png", format="PNG")
             self.pixmap.save(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+            pil_image = Image.open(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+            # pil_image.show()
+            data = list(pil_image.getdata())
+            # print(data)
+            new_image = Image.new(mode="RGBA", size=(self.pixmap.width(), self.pixmap.height()))
+            new_image.putdata(data)
+            # new_image.show()
+            # Image.fromarray(data, mode="RGBA")
+            new_image.save(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+            # self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
 
     def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
         if (self.paint):
@@ -172,20 +190,102 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.board.setPixmap(self.pixmap)
         self.painter.begin(self.pixmap)
 
+    def reset_pixmaps(self, paths, path):
+        self.painter.end()
+        self.pixmap = QPixmap(path)
+        self.pixmap_path = path
+        # self.pixmap = self.return_transparent_pixmap(self.pixmap, 0.1)
+        # self.board.setPixmap(self.pixmap)
+        self.board.setPixmap(self.pixmap)
+        self.painter.begin(self.pixmap)
+
+        self.pixmap_paths = paths
+        for i, path in enumerate(self.pixmap_paths):
+            if (path is not None):
+                self.pixmaps[i] = QPixmap(path)
+            else:
+                self.pixmaps[i] = None
+
+        for i in range(len(self.boards)):
+            if (i != self.num_of_visible_frames // 2):
+                if (self.pixmaps[i] is not None):
+                    self.pixmaps[i] = self.return_transparent_pixmap(self.pixmap_paths[i], 0.1 * abs(self.num_of_visible_frames // 2 - i))
+
+                    # path = self.pixmap_paths[i]
+                    # t = 1 - 0.1 * abs(self.num_of_visible_frames // 2 - i)
+                    #
+                    # t = int(t * 255)
+                    #
+                    # print(t)
+                    # image = QImage(path)
+                    # for k in range(image.height()):
+                    #     for j in range(image.width()):
+                    #         # image.pixel(j, i)
+                    #         # image.setPixel(j, i, QColor())
+                    #
+                    #         rgb = QColor(image.pixel(j, k))
+                    #         r, g, b, a = rgb.getRgb()
+                    #         # print(r, g, b, a)
+                    #         image.setPixelColor(QPoint(j, k), QColor(r, g, b, t))
+                    #
+                    # self.pixmaps[i] = QPixmap(image)
+
+                    self.boards[i].show()
+                    self.boards[i].setPixmap(self.pixmaps[i])
+                else:
+                    self.boards[i].hide()
+            # else:
+            #     self.pixmap = self.return_transparent_pixmap(self.pixmap, 0.5)
+            #     self.board.setPixmap(self.pixmap)
+            #     break
+
     def show_board(self):
         # self.setFocus()
         self.board = QLabel(self)
         self.board.setGeometry(10, 30, self.current_project.width, self.current_project.height)
         self.board.show()
         self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+        # self.pixmap.save()
         self.board.setPixmap(self.pixmap)
+
+        self.pixmaps = [None] * self.num_of_visible_frames
+        self.boards = [None] * self.num_of_visible_frames
 
         self.painter = QPainter(self.pixmap)
         self.painter.begin(self.pixmap)
 
+        for i in range(len(self.boards)):
+            if (i != self.num_of_visible_frames // 2):
+                self.boards[i] = QLabel(self)
+                self.boards[i].setGeometry(10, 30, self.current_project.width, self.current_project.height)
+                # self.boards[i].setEnabled(False)
+                # self.boards[i].(1 - 0.1 * abs(self.num_of_visible_frames // 2 - i))
+                # self.boards[i].setWindowOpacity(0.5)
+
+        self.reset_pixmaps(self.pixmaps, f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
+
+
     def load_parameters(self):
         settings = dict_read_from_csv("Tables_Interupting/Settings.csv")
         self.num_of_visible_frames = int(settings["NumOfVisibleFrames"])
+
+    def return_transparent_pixmap(self, path, t):
+        t = int(t * 255)
+
+        print(t)
+        image = QImage(path)
+        for i in range(image.height()):
+            for j in range(image.width()):
+                # image.pixel(j, i)
+                # image.setPixel(j, i, QColor())
+
+                rgb = QColor(image.pixel(j, i))
+                r, g, b, a = rgb.getRgb()
+                # print(r, g, b, a)
+                image.setPixelColor(QPoint(j, i), QColor(r, g, b, t))
+
+        pixmap = QPixmap(image)
+        return pixmap
 
 
 def except_hook(cls, exception, traceback):
