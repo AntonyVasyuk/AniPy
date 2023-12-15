@@ -34,10 +34,13 @@ class Ui_AniPyUI(object):
         self.actionCreate_project.setObjectName("actionCreate_project")
         self.actionOpen_Project = QtWidgets.QAction(AniPyUI)
         self.actionOpen_Project.setObjectName("actionOpen_Project")
+        self.actionSave_project_as_GIF = QtWidgets.QAction(AniPyUI)
+        self.actionSave_project_as_GIF.setObjectName("actionSave_project_as_GIF")
         self.menuOpen_panel.addAction(self.actionX_sheet)
         self.menuPanels.addAction(self.menuOpen_panel.menuAction())
         self.menuFile.addAction(self.actionCreate_project)
         self.menuFile.addAction(self.actionOpen_Project)
+        self.menuFile.addAction(self.actionSave_project_as_GIF)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuPanels.menuAction())
 
@@ -53,3 +56,4 @@ class Ui_AniPyUI(object):
         self.actionX_sheet.setText(_translate("AniPyUI", "X-sheet"))
         self.actionCreate_project.setText(_translate("AniPyUI", "Create project"))
         self.actionOpen_Project.setText(_translate("AniPyUI", "Open Project"))
+        self.actionSave_project_as_GIF.setText(_translate("AniPyUI", "Save project as GIF"))

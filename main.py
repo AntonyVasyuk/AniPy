@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import *
 
 from Classes.Creating_project_class import CreatingProject
 from Classes.Opening_Project_class import OpeningProject
+from Classes.SavingGif_class import SavingGif
 from Tables_Interupting.CSVInterupting import write_rows_to_csv, list_read_from_csv, dict_read_from_csv
 from Classes.XSheet_class import XSheet
 from UI_Py.AniPy_UI import Ui_AniPyUI
@@ -50,13 +51,32 @@ class AniPy(QMainWindow, Ui_AniPyUI):
         self.creating_project_form = None
         self.opening_project_form = None
         self.current_project = None
+        self.saving_gif = None
         self.menuFile.aboutToShow.connect(self.check_menus)
         self.actionX_sheet.triggered.connect(self.show_x_sheet)
         self.actionCreate_project.triggered.connect(self.get_new_project_params)
         self.actionOpen_Project.triggered.connect(self.what_project_to_open)
+        self.actionSave_project_as_GIF.triggered.connect(self.get_saving_gif_params)
         # self.setMouseTracking(True)
 
         # self.painter = QPainter(self.board)
+
+    def save_gif(self, *args):
+        file_name, on_what, num_of_loops, fps = args
+        for_gif = []
+        for frame in self.current_project.frames:
+            # print(frame.image_path)
+            image = Image.open(f"{frame.image_path}.png")
+            for i in range(on_what):
+                for_gif.append(image)
+
+        frame_0 = for_gif[0]
+        del for_gif[0]
+
+        d = int((1 / fps) * 1000)
+
+        for_gif[0].save(f"{file_name}.gif", save_all=True, append_images=for_gif, optimize=False, loop=num_of_loops, duration=d)
+        
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
         if (self.current_project is not None):
@@ -153,6 +173,11 @@ class AniPy(QMainWindow, Ui_AniPyUI):
     def set_settings_to_default(self):
         rows = list_read_from_csv('Tables_Interupting/Default_Settings.csv')
         write_rows_to_csv("Tables_Interupting/Settings.csv", rows)
+
+    def get_saving_gif_params(self):
+        if (self.saving_gif is None):
+            self.saving_gif = SavingGif(self)
+        self.saving_gif.show()
 
     def show_x_sheet(self):
         if (self.x_sheet is None):

@@ -37,17 +37,18 @@ class Project:
         order = [row[0] for row in self.cur.execute("""
         SELECT frame FROM Frames_order
         """)]
+        # print(order)
         frames = [list(row) for row in self.cur.execute("""
         SELECT * FROM Frames
         """)]
         # print(frames, sep='\n')
-        for frame in frames:
+        for i in order:
             self.frames.append(Frame(self, is_creating_new=False, **{
-                "Number": frame[1],
-                "Width": frame[2],
-                "Height": frame[3],
+                "Number": frames[i][1],
+                "Width": frames[i][2],
+                "Height": frames[i][3],
             }))
-        self.last_frame_number = frame[0] - 1
+        self.last_frame_number = frames[i][0] - 1
 
 
 
@@ -57,6 +58,7 @@ class Project:
         os.mkdir(self.project_folder)
 
         os.mkdir(f"{self.project_folder}{SEP}{NAME_OF_FOLDER_WITH_FRAMES}")
+        os.mkdir(f"{self.project_folder}{SEP}GIF")
         self.put_default_frames()
 
         # os.mkdir(f"{self.project_folder}{SEP}{NAME_OF_FOLDER_WITH_BACKGROUNDS}")
