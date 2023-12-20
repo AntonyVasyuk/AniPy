@@ -45,6 +45,12 @@ class Ui_XSheetUI(object):
         self.example_btn.setGeometry(QtCore.QRect(30, 10, 31, 31))
         self.example_btn.setText("")
         self.example_btn.setObjectName("example_btn")
+        self.delButton = QtWidgets.QPushButton(XSheetUI)
+        self.delButton.setGeometry(QtCore.QRect(180, 100, 40, 30))
+        self.delButton.setObjectName("delButton")
+        self.importBtn = QtWidgets.QPushButton(XSheetUI)
+        self.importBtn.setGeometry(QtCore.QRect(10, 100, 61, 30))
+        self.importBtn.setObjectName("importBtn")
 
         self.retranslateUi(XSheetUI)
         QtCore.QMetaObject.connectSlotsByName(XSheetUI)
@@ -58,3 +64,5 @@ class Ui_XSheetUI(object):
         self.rightLabel.setText(_translate("XSheetUI", "..."))
         self.leftAddButton.setText(_translate("XSheetUI", "+"))
         self.rightAddButton.setText(_translate("XSheetUI", "+"))
+        self.delButton.setText(_translate("XSheetUI", "-"))
+        self.importBtn.setText(_translate("XSheetUI", "Copy..."))

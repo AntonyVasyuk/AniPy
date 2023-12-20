@@ -2,7 +2,7 @@ import os
 
 from PyQt5.QtWidgets import *
 
-from Tables_Interupting.CSVInterupting import list_read_from_csv, dict_read_from_csv
+from CSVInterupting import dict_read_from_csv
 from UI_Py.OpeningProject_UI import *
 
 from constants import FOLDER_WITH_PROJECTS, SEP
@@ -15,8 +15,6 @@ class OpeningProject(QWidget, Ui_OpenProject):
         self.parent = parent
         self.setFixedSize(self.width(), self.height())
         self.projects_names = os.listdir(FOLDER_WITH_PROJECTS)
-        # print(self.projects_names)
-        # print(*self.projects_names)
         self.projects_to_open.insertItems(0, self.projects_names)
         self.open.clicked.connect(self.open_project)
         self.cancel.clicked.connect(self.close_)

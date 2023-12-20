@@ -17,7 +17,7 @@ class CreatingProject(QWidget, Ui_CreatingProject):
         self.default_color.setStyleSheet(
             "background-color: {}".format(self.color.name()))
 
-        self.pushButton.clicked.connect(self.create)
+        self.pushButton.clicked.connect(self.create_)
         self.cancel.clicked.connect(self.close_)
         self.default_color.clicked.connect(self.get_default_color)
 
@@ -31,7 +31,7 @@ class CreatingProject(QWidget, Ui_CreatingProject):
         self.parent.creating_project_form = None
         self.close()
 
-    def create(self):
+    def create_(self):
         self.parent.create_project(**{
             "Name": self.project_name.text(),
             "Width": self.frame_width.value(),
