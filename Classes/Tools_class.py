@@ -23,6 +23,7 @@ class Tools(QWidget, Ui_UI_Tools):
         self.rmb_color = "#ffffff"
         self.lmbBtn.clicked.connect(self.get_color)
         self.rmbBtn.clicked.connect(self.get_color)
+        self.swapBtn.clicked.connect(self.swap_colors)
 
         self.lineThick.setMinimum(1)
         self.lineThick.setMaximum(20)
@@ -41,6 +42,10 @@ class Tools(QWidget, Ui_UI_Tools):
         self.rmbBtn.setStyleSheet(
             "background-color: {}".format(self.rmb_color))
 
+    def swap_colors(self):
+        self.lmb_color, self.rmb_color = self.rmb_color, self.lmb_color
+        self.update_colors()
+
     def update_line(self):
         if (self.sender() == self.lineSize):
             self.lineThick.setValue(self.lineSize.value())
@@ -52,16 +57,15 @@ class Tools(QWidget, Ui_UI_Tools):
         color = QColorDialog.getColor()
         if color.isValid():
             if (self.sender() == self.lmbBtn):
-                self.lmbBtn.setStyleSheet(
-                    "background-color: {}".format(color.name()))
                 self.lmb_color = color.name()
             else:
-                self.rmbBtn.setStyleSheet(
-                    "background-color: {}".format(color.name()))
                 self.rmb_color = color.name()
+        self.update_colors()
 
+    def update_colors(self):
         self.parent_.main_color = self.lmb_color
         self.parent_.second_color = self.rmb_color
-
-    # def setup_ui_with_features(self):
-    #     pass
+        self.lmbBtn.setStyleSheet(
+            "background-color: {}".format(self.lmb_color))
+        self.rmbBtn.setStyleSheet(
+            "background-color: {}".format(self.rmb_color))

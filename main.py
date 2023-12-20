@@ -31,19 +31,52 @@ class Brush:  # Class of brush, that draw via given painter
 class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a-all the things
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
+
+        self.init_main_window()
+
+        self.menuFile.aboutToShow.connect(self.check_menus)
+        self.menuPanels.aboutToShow.connect(self.check_menus)
+        self.actionX_sheet.triggered.connect(self.show_x_sheet)
+        self.actionCreate_project.triggered.connect(self.get_new_project_params)
+        self.actionOpen_Project.triggered.connect(self.what_project_to_open)
+        self.actionSave_project_as_GIF.triggered.connect(self.get_saving_gif_params)
+        self.actionTools.triggered.connect(self.show_tools)
+
+    def annihilate_forms(self):
+        objects = [
+            # self.boards,
+            # self.pixmaps,
+            self.board,
+            # self.painter,
+            # self.pixmap,
+
+            self.tools,
+            self.x_sheet,
+            self.creating_project_form,
+            self.opening_project_form,
+            # self.current_project,
+            self.saving_gif
+        ]
+        for obj in objects:
+            if (obj is not None):
+                obj.hide()
+
+    def init_main_window(self):
+        self.update()
 
         self.boards = None
         self.pixmaps = None
         self.board = None
-        self.pixmap_paths = None
         self.painter = None
-        self.pixmap_path = None
         self.pixmap = None
+
+        self.pixmap_paths = None
+        self.pixmap_path = None
         self.was_out_of_board = None
         self.mouse_y = None
         self.mouse_x = None
 
-        self.setupUi(self)
         self.num_of_visible_frames = 11
 
         # All about drawing
@@ -63,14 +96,6 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
         self.current_project = None
         self.saving_gif = None
 
-        self.menuFile.aboutToShow.connect(self.check_menus)
-        self.menuPanels.aboutToShow.connect(self.check_menus)
-        self.actionX_sheet.triggered.connect(self.show_x_sheet)
-        self.actionCreate_project.triggered.connect(self.get_new_project_params)
-        self.actionOpen_Project.triggered.connect(self.what_project_to_open)
-        self.actionSave_project_as_GIF.triggered.connect(self.get_saving_gif_params)
-        self.actionTools.triggered.connect(self.show_tools)
-
     def save_gif(self, *args):  # Saving to GIF current project
         file_name, on_what, num_of_loops, fps = args
         for_gif = []
@@ -86,7 +111,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
                      duration=d)
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
-        if (event.button() == Qt.LeftButton):
+        if (event.button() == Qt.LeftButton):  # Changing the color accordant with the pressed mouse button
             self.color = self.main_color
         else:
             self.color = self.second_color
@@ -123,7 +148,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
                     prev_mouse_x = self.objects_to_paint[-1].x
                     prev_mouse_y = self.objects_to_paint[-1].y
                     if (not self.was_out_of_board):
-                        n = 10
+                        n = 12
                         for i in range(1, n):
                             self.objects_to_paint.append(self.what_object_to_draw(
                                 prev_mouse_x + i * (self.mouse_x - prev_mouse_x) // n,
@@ -197,17 +222,27 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
 
     def open_project(self, **kwargs):
         self.opening_project_form = None
+
+        if (self.current_project is not None):
+            self.annihilate_forms()
+        self.init_main_window()
+
         self.current_project = Project(self, is_creating_new=False, **kwargs)
         self.fetch_size()
-        self.actionX_sheet.trigger()
+        self.show_x_sheet()
         self.show_board()
         self.show_tools()
 
     def create_project(self, **kwargs):
         self.creating_project_form = None
+
+        if (self.current_project is not None):
+            self.annihilate_forms()
+        self.init_main_window()
+
         self.current_project = Project(self, **kwargs)
         self.fetch_size()
-        self.actionX_sheet.trigger()
+        self.show_x_sheet()
         self.show_board()
         self.show_tools()
 
@@ -262,7 +297,8 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
         for i in range(len(self.boards)):
             if (i != self.num_of_visible_frames // 2):
                 self.boards[i] = QLabel(self)
-                self.boards[i].setGeometry(10, 30, self.current_project.width, self.current_project.height)
+                self.boards[i].setGeometry(self.board.x(), self.board.y(), self.current_project.width,
+                                           self.current_project.height)
 
         self.reset_pixmaps(self.pixmaps, f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
 
