@@ -27,13 +27,7 @@
     <property name="title">
      <string>Panels</string>
     </property>
-    <widget class="QMenu" name="menuOpen_panel">
-     <property name="title">
-      <string>Open panel...</string>
-     </property>
-     <addaction name="actionX_sheet"/>
-    </widget>
-    <addaction name="menuOpen_panel"/>
+    <addaction name="actionX_sheet"/>
     <addaction name="actionTools"/>
    </widget>
    <widget class="QMenu" name="menuFile">

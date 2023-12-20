@@ -1,9 +1,9 @@
-from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import *
 
 from UI_Py.SavingGif_UI import *
 
 from constants import SEP
+
 
 class SavingGif(QWidget, Ui_gifSave):
     def __init__(self, parent):

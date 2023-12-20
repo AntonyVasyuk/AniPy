@@ -10,24 +10,28 @@ DEP_VIS = "+"
 UB_VIS = "*"
 
 
-class XSheet(QWidget, Ui_XSheetUI):
+class XSheet(QWidget, Ui_XSheetUI):  # x-sheet is the panel which performs actions with frames
     def __init__(self, parent_):
         super().__init__()
+
+        self.current_frames = None
+        self.visibility_buttons = None
+        self.frame_buttons = None
+
         self.setupUi(self)
         self.parent_ = parent_
         self.num_of_visible_frames = self.parent_.num_of_visible_frames
 
-        self.depend_visible_frames = [False] * self.num_of_visible_frames
+        self.visible_frames = [False] * self.num_of_visible_frames
 
         self.frames = self.parent_.current_project.frames
-
-        # TODO encapsulation fix
 
         self.choose_index = self.num_of_visible_frames // 2
         self.left_frames_end = 0
         self.right_frames_end = self.num_of_visible_frames - 1
         self.setup_ui_with_features()
         self.update_buttons()
+
         self.leftButton.clicked.connect(lambda: self.move_visible_frames(-1))
         self.rightButton.clicked.connect(lambda: self.move_visible_frames(1))
         self.leftAddButton.clicked.connect(lambda: self.add_frame(0))
@@ -35,15 +39,18 @@ class XSheet(QWidget, Ui_XSheetUI):
         self.delButton.clicked.connect(self.del_frame)
         self.importBtn.clicked.connect(self.import_frame)
 
-
     def import_frame(self):
         png = QFileDialog.getOpenFileName(
-            self, "Choose PNG file", self.parent_.current_project.project_folder + SEP + "Frames"
+            self, "Choose PNG file", self.parent_.current_project.project_folder + SEP + "Frames",
+            "PNG Files (*.png)"
         )[0]
 
-        shutil.copyfile(png, self.parent_.current_project.frames[self.choose_index].image_path + ".png")
+        try:
+            shutil.copyfile(png, self.parent_.current_project.frames[self.choose_index].image_path + ".png")
+            self.move_visible_frames(0)
+        except FileNotFoundError:
+            pass
 
-        self.move_visible_frames(0)
 
     def del_frame(self):
         self.parent_.current_project.del_frame(self.choose_index)
@@ -54,6 +61,8 @@ class XSheet(QWidget, Ui_XSheetUI):
         self.move_visible_frames(not d)
 
     def setup_ui_with_features(self):
+        self.move(self.parent_.x(), self.parent_.y() + self.parent_.height() + 45)
+
         self.resize(SPACE * 6 + self.leftButton.width() * 2 + BTN_WIDTH * self.num_of_visible_frames, self.height())
         self.setFixedSize(self.width(), self.height())
         self.rightButton.move(self.width() - self.rightButton.width() - SPACE, self.rightButton.y())
@@ -82,10 +91,12 @@ class XSheet(QWidget, Ui_XSheetUI):
         self.leftAddButton.move(self.frame_buttons[len(self.frame_buttons) // 2 - 1].x(), self.leftAddButton.y())
         self.rightAddButton.move(self.frame_buttons[len(self.frame_buttons) // 2 + 1].x(), self.rightAddButton.y())
 
+        self.setFixedSize(self.width(), self.height())
+
     def change_visibility_of_frame(self):
         i = self.visibility_buttons.index(self.sender())
-        self.depend_visible_frames[i] = not self.depend_visible_frames[i]
-        self.sender().setText("*" * self.depend_visible_frames[i])
+        self.visible_frames[i] = not self.visible_frames[i]
+        self.sender().setText("*" * self.visible_frames[i])
         self.move_visible_frames(0)
 
     def update_buttons(self):
@@ -112,7 +123,8 @@ class XSheet(QWidget, Ui_XSheetUI):
         self.move_visible_frames(self.frame_buttons.index(self.sender()) - self.num_of_visible_frames // 2)
 
     def move_visible_frames(self, d):
-        if (self.right_frames_end + d >= self.num_of_visible_frames // 2 and self.left_frames_end + d <= len(self.frames) - 1 - self.num_of_visible_frames // 2):
+        if (self.right_frames_end + d >= self.num_of_visible_frames // 2 and self.left_frames_end + d <= len(
+                self.frames) - 1 - self.num_of_visible_frames // 2):
             self.left_frames_end += d
             self.right_frames_end += d
             self.current_frames = self.frames[self.left_frames_end:self.right_frames_end + 1]
@@ -122,9 +134,9 @@ class XSheet(QWidget, Ui_XSheetUI):
         new_pixmaps = [None] * self.num_of_visible_frames
         for i in range(self.num_of_visible_frames):
             if (0 <= self.choose_index - self.num_of_visible_frames // 2 + i < len(self.frames)):
-                if (self.depend_visible_frames[i]):
-                    new_pixmaps[i] = f"{self.frames[self.choose_index - self.num_of_visible_frames // 2 + i].image_path}.png"
+                if (self.visible_frames[i]):
+                    new_pixmaps[
+                        i] = f"{self.frames[self.choose_index - self.num_of_visible_frames // 2 + i].image_path}.png"
 
         self.parent_.reset_pixmaps(new_pixmaps, f"{self.frames[self.choose_index].image_path}.png")
         self.update_buttons()
-

@@ -31,6 +31,18 @@ class Brush:  # Class of brush, that draw via given painter
 class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a-all the things
     def __init__(self):
         super().__init__()
+
+        self.boards = None
+        self.pixmaps = None
+        self.board = None
+        self.pixmap_paths = None
+        self.painter = None
+        self.pixmap_path = None
+        self.pixmap = None
+        self.was_out_of_board = None
+        self.mouse_y = None
+        self.mouse_x = None
+
         self.setupUi(self)
         self.num_of_visible_frames = 11
 
@@ -51,8 +63,8 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
         self.current_project = None
         self.saving_gif = None
 
-        # Connections
         self.menuFile.aboutToShow.connect(self.check_menus)
+        self.menuPanels.aboutToShow.connect(self.check_menus)
         self.actionX_sheet.triggered.connect(self.show_x_sheet)
         self.actionCreate_project.triggered.connect(self.get_new_project_params)
         self.actionOpen_Project.triggered.connect(self.what_project_to_open)
@@ -151,6 +163,13 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
         else:
             self.actionOpen_Project.setEnabled(False)
 
+        if (self.current_project is not None):
+            self.actionX_sheet.setEnabled(True)
+            self.actionTools.setEnabled(True)
+        else:
+            self.actionX_sheet.setEnabled(False)
+            self.actionTools.setEnabled(False)
+
     def get_saving_gif_params(self):
         if (self.saving_gif is None):
             self.saving_gif = SavingGif(self)
@@ -179,6 +198,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
     def open_project(self, **kwargs):
         self.opening_project_form = None
         self.current_project = Project(self, is_creating_new=False, **kwargs)
+        self.fetch_size()
         self.actionX_sheet.trigger()
         self.show_board()
         self.show_tools()
@@ -186,9 +206,13 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
     def create_project(self, **kwargs):
         self.creating_project_form = None
         self.current_project = Project(self, **kwargs)
+        self.fetch_size()
         self.actionX_sheet.trigger()
         self.show_board()
         self.show_tools()
+
+    def fetch_size(self):
+        self.resize(self.current_project.width + 20, self.current_project.height + 45)
 
     def reset_pixmap(self, pixmap):
         self.painter.end()
@@ -224,7 +248,7 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
 
     def show_board(self):
         self.board = QLabel(self)
-        self.board.setGeometry(10, 30, self.current_project.width, self.current_project.height)
+        self.board.setGeometry(10, 35, self.current_project.width, self.current_project.height)
         self.board.show()
         self.pixmap = QPixmap(f"{self.x_sheet.frames[self.x_sheet.choose_index].image_path}.png")
         self.board.setPixmap(self.pixmap)
@@ -262,6 +286,8 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
     #
     # Little note: if I did the transparency with this method, adding of opacity will be very long, so I did it with
     # the next function, that works with bless of some magic functions
+    #     ~~|~
+    #       V
 
 
 def return_transparent_pixmap(path, t):
@@ -279,7 +305,6 @@ def return_transparent_pixmap(path, t):
     painter.end()
 
     return QPixmap(image)
-
 
 
 def except_hook(cls, exception, traceback):

@@ -10,6 +10,7 @@ class Tools(QWidget, Ui_UI_Tools):
         self.setupUi(self)
         self.parent_ = parent_
         self.setFixedSize(self.width(), self.height())
+        self.move(self.parent_.x() + self.parent_.width() + 10, self.parent_.y())
 
         self.isFillBtn.hide()
 
