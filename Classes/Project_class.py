@@ -30,7 +30,7 @@ class Project:
             self.cur = self.con.cursor()
             self.import_dirs()
 
-    def import_dirs(self):
+    def import_dirs(self):  # creating Py objects representing project thru the parameters from class folder
         order = [row[0] for row in self.cur.execute("""
         SELECT frame FROM Frames_order
         """)]
@@ -41,7 +41,7 @@ class Project:
                 "Height": self.height,
             }))
 
-    def create_dirs(self):
+    def create_dirs(self):  # create project folder, place parameters and create Py objects
         os.mkdir(self.project_folder)
 
         os.mkdir(f"{self.project_folder}{SEP}{NAME_OF_FOLDER_WITH_FRAMES}")
@@ -100,13 +100,7 @@ class Project:
         del self.frames[i]
         self.update_order()
 
-    def del_frame_from_sql(self, i):
-        self.cur.execute(f"""
-        DELETE FROM Frames_order
-        WHERE orderId = {i - 1}
-        """)
-
-    def update_order(self):
+    def update_order(self):  # rewriting the SQL table
         self.cur.execute("""
         DROP TABLE Frames_order
         """)

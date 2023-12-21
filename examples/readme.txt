@@ -1,0 +1,1 @@
+It is some example projects. To see contents, copy the contains of current folder to Projects folder.

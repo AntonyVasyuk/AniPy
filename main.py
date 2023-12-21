@@ -45,17 +45,12 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
 
     def annihilate_forms(self):
         objects = [
-            # self.boards,
-            # self.pixmaps,
             self.board,
-            # self.painter,
-            # self.pixmap,
 
             self.tools,
             self.x_sheet,
             self.creating_project_form,
             self.opening_project_form,
-            # self.current_project,
             self.saving_gif
         ]
         for obj in objects:

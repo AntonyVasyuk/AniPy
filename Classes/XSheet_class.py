@@ -60,7 +60,7 @@ class XSheet(QWidget, Ui_XSheetUI):  # x-sheet is the panel which performs actio
         self.parent_.current_project.add_frame(self.choose_index + d)
         self.move_visible_frames(not d)
 
-    def setup_ui_with_features(self):
+    def setup_ui_with_features(self):  # make window fancier, place all the buttons, define arrays, etc.
         self.move(self.parent_.x(), self.parent_.y() + self.parent_.height() + 45)
 
         self.resize(SPACE * 6 + self.leftButton.width() * 2 + BTN_WIDTH * self.num_of_visible_frames, self.height())
@@ -93,7 +93,7 @@ class XSheet(QWidget, Ui_XSheetUI):  # x-sheet is the panel which performs actio
 
         self.setFixedSize(self.width(), self.height())
 
-    def change_visibility_of_frame(self):
+    def change_visibility_of_frame(self):  # make frame visible, but transparent
         i = self.visibility_buttons.index(self.sender())
         self.visible_frames[i] = not self.visible_frames[i]
         self.sender().setText("*" * self.visible_frames[i])
