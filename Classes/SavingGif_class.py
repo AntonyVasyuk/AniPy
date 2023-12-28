@@ -15,6 +15,7 @@ class SavingGif(QWidget, Ui_gifSave):
         self.one.setChecked(True)
         self.twenty_four.setChecked(True)
         self.inf.setChecked(True)
+        self.cancel.clicked.connect(self.close_)
 
     def save(self):
         name = self.fileName.text()
@@ -44,6 +45,7 @@ class SavingGif(QWidget, Ui_gifSave):
             fps = 30
 
         self.parent.save_gif(name, on, loops, fps)
+        self.close_()
 
     def get_file_folder(self):
         return QFileDialog.getExistingDirectory(self, "Choose files folder", self.parent.current_project.project_folder

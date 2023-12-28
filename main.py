@@ -186,9 +186,11 @@ class AniPy(QMainWindow, Ui_AniPyUI):  # Main program class, foundation of a-a-a
         if (self.current_project is not None):
             self.actionX_sheet.setEnabled(True)
             self.actionTools.setEnabled(True)
+            self.actionSave_project_as_GIF.setEnabled(True)
         else:
             self.actionX_sheet.setEnabled(False)
             self.actionTools.setEnabled(False)
+            self.actionSave_project_as_GIF.setEnabled(False)
 
     def get_saving_gif_params(self):
         if (self.saving_gif is None):
