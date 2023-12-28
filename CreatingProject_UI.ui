@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>401</width>
-    <height>252</height>
+    <height>272</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -107,7 +107,7 @@
     <number>4500</number>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="createBtn">
    <property name="geometry">
     <rect>
      <x>50</x>
@@ -157,6 +157,19 @@
    </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="status">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>381</width>
+     <height>31</height>
+    </rect>
    </property>
    <property name="text">
     <string/>

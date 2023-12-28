@@ -17,9 +17,19 @@ class CreatingProject(QWidget, Ui_CreatingProject):
         self.default_color.setStyleSheet(
             "background-color: {}".format(self.color.name()))
 
-        self.pushButton.clicked.connect(self.create_)
+        self.createBtn.clicked.connect(self.create_)
         self.cancel.clicked.connect(self.close_)
         self.default_color.clicked.connect(self.get_default_color)
+        self.frame_width.valueChanged.connect(self.check_size)
+        self.frame_height.valueChanged.connect(self.check_size)
+
+    def check_size(self):
+        if (self.frame_width.value() > 0 and self.frame_height.value() > 0):
+            self.status.setText("")
+            self.createBtn.setEnabled(True)
+        else:
+            self.status.setText("Size of the frame must be positive!")
+            self.createBtn.setEnabled(False)
 
     def get_default_color(self):
         self.color = QColorDialog.getColor()
@@ -32,10 +42,13 @@ class CreatingProject(QWidget, Ui_CreatingProject):
         self.close()
 
     def create_(self):
-        self.parent.create_project(**{
-            "Name": self.project_name.text(),
-            "Width": self.frame_width.value(),
-            "Height": self.frame_height.value(),
-            "Color": self.color.name()
-        })
-        self.close()
+        try:
+            self.parent.create_project(**{
+                "Name": self.project_name.text(),
+                "Width": self.frame_width.value(),
+                "Height": self.frame_height.value(),
+                "Color": self.color.name()
+            })
+            self.close()
+        except FileExistsError:
+            self.status.setText("Project name is already used!")
